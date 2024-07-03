@@ -1,0 +1,15 @@
+# This file can be used if you do not have an LDAP set up.
+# List of users
+
+# to generate password & digest use: 
+# docker run --rm authelia/authelia:latest authelia crypto hash generate argon2 --random --random.length 16 --random.charset alphanumeric
+
+users:
+  {{ADMIN_USERNAME}}: # this is USERNAME
+    disabled: false
+    displayname: "{{ADMIN_NAME}}"
+    password: "{{ADMIN_USER_PASSWORD_DIGEST}}"  # yamllint disable-line rule:line-length
+    email: {{ADMIN_EMAIL}}
+    groups:
+      - admins
+      - dev

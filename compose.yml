@@ -1,0 +1,40 @@
+networks:
+  web:
+    external: true
+  internal:
+    external: false
+    driver: bridge
+
+services:
+  caddy:
+    image: caddy:latest # tested with caddy:4.38.9
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      # - "127.0.0.1:2019:2019" # HTTP API https://caddyserver.com/docs/api
+    volumes:
+      - "${PWD}/volumes/caddy/Caddyfile:/etc/caddy/Caddyfile"
+      - "${PWD}/volumes/caddy/data:/data" # Optional
+      - "${PWD}/volumes/caddy/config:/config" # Optional
+    networks:
+      - web
+      - internal
+  whoami:
+    image: traefik/whoami
+    restart: unless-stopped
+    networks:
+      - internal
+  authelia:
+    container_name: authelia    
+    image: authelia/authelia
+    environment:
+      - TZ=America/New_York
+    volumes:
+      - "${PWD}/volumes/authelia/config:/config"
+    # ports:
+    #   - "9091:9091"
+    hostname: authelia
+    networks:
+      - internal
+    restart: unless-stopped
